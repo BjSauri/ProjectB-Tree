@@ -1,0 +1,6 @@
+Average insert operations: 10.4409
+Average insert time ns: 36979.24
+Average search operations: 16.34
+Average search time ns: 8928.0
+Average delete operations: 12.655
+Average delete time ns: 70835.5
