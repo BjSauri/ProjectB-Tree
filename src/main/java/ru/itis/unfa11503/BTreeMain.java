@@ -16,12 +16,14 @@ public class BTreeMain {
 
         BTree tree = new BTree(3);
 
+        //Вставка 10000 элементов
         for (int num : randomNumbers) {
             BTree.Stats stats = tree.insertMeasured(num);
             insertTimes.add(stats.nanos);
             insertOps.add(stats.operations);
         }
 
+        //Поиск 100 элементов
         int[] searchElements = selectRandomElements(randomNumbers, 100);
         for (int num : searchElements) {
             BTree.Stats stats = tree.searchMeasured(num);
@@ -29,6 +31,7 @@ public class BTreeMain {
             searchOps.add(stats.operations);
         }
 
+        //Удаление 1000 элементов
         int[] deleteElements = selectRandomElements(randomNumbers, 1000);
         for (int num : deleteElements) {
             BTree.Stats stats = tree.deleteMeasured(num);
@@ -36,7 +39,7 @@ public class BTreeMain {
             deleteOps.add(stats.operations);
         }
 
-        saveResultsToFile();
+        saveResultsToFiles();
         printAverages();
     }
 
@@ -64,27 +67,42 @@ public class BTreeMain {
     }
 
     private static void printAverages() {
+        System.out.println();
         System.out.println("СРЕДНИЕ ЗНАЧЕНИЯ");
-        System.out.println("Вставка : время = " + average(insertTimes) + " нс, операции = " + average(insertOps));
-        System.out.println("Поиск : время = " + average(searchTimes) + " нс, операции = " + average(searchOps));
-        System.out.println("Удаление : время = " + average(deleteTimes) + "нс, операции = " + average(deleteOps));
+        System.out.println("Вставка : время = " + Math.round(average(insertTimes)) + " нс, операции = " + Math.round(average(insertOps)));
+        System.out.println("Поиск : время = " + Math.round(average(searchTimes)) + " нс, операции = " + Math.round(average(searchOps)));
+        System.out.println("Удаление : время = " + Math.round(average(deleteTimes)) + " нс, операции = " + Math.round(average(deleteOps)));
     }
 
-    private static void saveResultsToFile() {
-        try (PrintWriter writer = new PrintWriter(new File("btree_results.csv"))) {
-            writer.println("Тип,Время(нс),Операции");
-
+    private static void saveResultsToFiles() {
+        try (PrintWriter writer = new PrintWriter(new File("insert_results.csv"))) {
+            writer.println("Номер операции,Время(нс),Количество операций");
             for (int i = 0; i < insertTimes.size(); i++) {
-                writer.println("Вставка " + insertTimes.get(i) + " " + insertOps.get(i));
+                writer.println((i + 1) + " , " + insertTimes.get(i) + " , " + insertOps.get(i));
             }
-            for (int i = 0; i < searchTimes.size(); i++) {
-                writer.println("Поиск " + searchTimes.get(i) + " " + searchOps.get(i));
-            }
-            for (int i = 0; i < deleteTimes.size(); i++) {
-                writer.println("Удаление " + deleteTimes.get(i) + " " + deleteOps.get(i));
-            }
+            System.out.println("Результаты вставки сохранены в insert_results.csv");
         } catch (FileNotFoundException e) {
-            System.err.println("Ошибка сохранения: " + e.getMessage());
+            System.err.println("Ошибка сохранения insert_results.csv: " + e.getMessage());
+        }
+
+        try (PrintWriter writer = new PrintWriter(new File("search_results.csv"))) {
+            writer.println("Номер операции,Время(нс),Количество операций");
+            for (int i = 0; i < searchTimes.size(); i++) {
+                writer.println((i + 1) + " , " + searchTimes.get(i) + " , " + searchOps.get(i));
+            }
+            System.out.println("Результаты поиска сохранены в search_results.csv");
+        } catch (FileNotFoundException e) {
+            System.err.println("Ошибка сохранения search_results.csv: " + e.getMessage());
+        }
+
+        try (PrintWriter writer = new PrintWriter(new File("delete_results.csv"))) {
+            writer.println("Номер операции,Время(нс),Количество операций");
+            for (int i = 0; i < deleteTimes.size(); i++) {
+                writer.println((i + 1) + " , " + deleteTimes.get(i) + " , " + deleteOps.get(i));
+            }
+            System.out.println("Результаты удаления сохранены в delete_results.csv");
+        } catch (FileNotFoundException e) {
+            System.err.println("Ошибка сохранения delete_results.csv: " + e.getMessage());
         }
     }
 
