@@ -42,10 +42,6 @@ public class BTree {
         ops = 0;
     }
 
-    private void op() {
-        ops++;
-    }
-
     public Stats insertMeasured(int key) {
         resetOps();
         long start = System.nanoTime();
@@ -76,14 +72,14 @@ public class BTree {
         int i = 0;
         while (i < x.n && key > x.keys[i]) {
             i++;
-            op();
+            ops++;
         }
         if (i < x.n && key == x.keys[i]) {
-            op();
+            ops++;
             return x;
         }
         if (x.leaf) return null;
-        op();
+        ops++;
         return search(x.children[i], key);
     }
 
@@ -92,7 +88,7 @@ public class BTree {
             root = new Node(t, true);
             root.keys[0] = key;
             root.n = 1;
-            op();
+            ops++;
             return;
         }
 
@@ -115,15 +111,15 @@ public class BTree {
             while (i >= 0 && key < x.keys[i]) {
                 x.keys[i + 1] = x.keys[i];
                 i--;
-                op();
+                ops++;
             }
             x.keys[i + 1] = key;
             x.n++;
-            op();
+            ops++;
         } else {
             while (i >= 0 && key < x.keys[i]) {
                 i--;
-                op();
+                ops++;
             }
             i++;
             if (x.children[i].n == 2 * t - 1) {
@@ -140,13 +136,13 @@ public class BTree {
 
         for (int j = 0; j < t - 1; j++) {
             z.keys[j] = y.keys[j + t];
-            op();
+            ops++;
         }
 
         if (!y.leaf) {
             for (int j = 0; j < t; j++) {
                 z.children[j] = y.children[j + t];
-                op();
+                ops++;
             }
         }
 
@@ -190,7 +186,7 @@ public class BTree {
         int idx = 0;
         while (idx < x.n && x.keys[idx] < key) {
             idx++;
-            op();
+            ops++;
         }
         return idx;
     }
@@ -198,7 +194,7 @@ public class BTree {
     private void deleteFromLeaf(Node x, int idx) {
         for (int i = idx + 1; i < x.n; i++) x.keys[i - 1] = x.keys[i];
         x.n--;
-        op();
+        ops++;
     }
 
     private void deleteFromNonLeaf(Node x, int idx) {
@@ -254,7 +250,7 @@ public class BTree {
 
         child.n++;
         sibling.n--;
-        op();
+        ops++;
     }
 
     private void borrowFromNext(Node x, int idx) {
@@ -272,7 +268,7 @@ public class BTree {
 
         child.n++;
         sibling.n--;
-        op();
+        ops++;
     }
 
     private void merge(Node x, int idx) {
@@ -291,6 +287,6 @@ public class BTree {
 
         child.n += sibling.n + 1;
         x.n--;
-        op();
+        ops++;
     }
 }
